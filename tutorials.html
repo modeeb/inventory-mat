@@ -1,4 +1,4 @@
- <h1>Google Maps Embed API</h1>
+ <!--h1>Google Maps Embed API</h1>
 <iframe frameborder="0" style="width:600px;height:300px;border:0" allowfullscreen
 src="https://www.google.com/maps/embed/v1/place?q=53.372247%2C-6.513101&key=AIzaSyDqg9YdTGoprYMgFl4yV2CvrNcgozd3Mgo"></iframe>
 <h1>Google Static Maps API</h1>
@@ -7,14 +7,93 @@ src="https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+Y
 &markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318
 &markers=color:red%7Clabel:C%7C40.718217,-73.998284
 &key=AIzaSyDqg9YdTGoprYMgFl4yV2CvrNcgozd3Mgo" /-->
-<img frameborder="0" style="width:600px;height:300px;border:0" allowfullscreen
+<!--img frameborder="0" style="width:600px;height:300px;border:0" allowfullscreen
 src="https://maps.googleapis.com/maps/api/staticmap?center=53.372247,-6.513101&zoom=16&size=600x300&maptype=roadmap
 &markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318
 &markers=color:red%7Clabel:C%7C40.718217,-73.998284
 &key=AIzaSyDqg9YdTGoprYMgFl4yV2CvrNcgozd3Mgo" />
-<h1>Google Maps JavaScript API</h1>
-<div id="map" style="height: 300px"></div>
-<script type="text/javascript" src="js/map.js"></script>
+<h1>Google Maps JavaScript API</h1-->
+<div id="map" style="height: 100%"></div>
+<script type="text/javascript">
+// When the window has finished loading google map
+//google.maps.event.addDomListener(window, 'load', initMap);
+
+function rndLat() {
+    var factor = Math.random() > .5 ? +50 : -50;
+    return 53.372247 + Math.random() / factor;
+}
+
+function rndLng() {
+    var factor = Math.random() > .5 ? +50 : -50;
+    return -6.513101 + Math.random() / factor;
+}
+
+function rndIco() {
+    return "./SVG/battery-" + Math.floor(Math.random() * 4.9) + ".svg";
+}
+
+function rndLab() {
+    return "" + Math.floor(Math.random() * 4.9);
+}
+
+function isMatching(label) {
+    return label == "2" || label == "4";
+}
+
+function initMap() {
+    var chicago = new google.maps.LatLng(41.85, -87.65);
+    var indianapolis = new google.maps.LatLng(39.79, -86.14);
+    var dublin = new google.maps.LatLng(53.372247, -6.513101);
+
+    var places = [];
+
+    // Create a map object and specify the DOM element for display.
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: new google.maps.LatLng(53.372247, -6.513101),
+        scrollwheel: false,
+        streetViewControl: false,
+        zoom: 16
+    });
+
+    for (var i = 0; i < 32; i++) {
+        places.push({
+            position: new google.maps.LatLng(rndLat(), rndLng()),
+            icon: rndIco(),
+            //label: rndLab(),
+            map: map
+        });
+	}
+
+	var latlngbounds = new google.maps.LatLngBounds();
+    for (var i = 0; i < places.length; i++) {
+        //if (isMatching(places[i].label)) {
+		    new google.maps.Marker(places[i]);
+		    latlngbounds.extend(places[i].position);
+        //}
+	}
+	map.fitBounds(latlngbounds);
+
+    var directionsDisplay = new google.maps.DirectionsRenderer({
+        map: map
+    });
+
+    // Set destination, origin and travel mode.
+    var request = {
+        destination: indianapolis,
+        origin: chicago,
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    // Pass the directions request to the directions service.
+    var directionsService = new google.maps.DirectionsService();
+    directionsService.route(request, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            // Display the route on the map.
+            //directionsDisplay.setDirections(response);
+        }
+    });
+}
+</script>
 <!--
  You need to include this script on any page that has a Google Map.
  When using Google Maps on your own site you MUST signup for your own API key at:
