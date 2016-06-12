@@ -8,12 +8,12 @@ function rndPnt(i) {
     return i + Math.random() / factor;
 }
 
-function rndLat() {
-    return rndPnt(53.372247);
+function rndLat(origin) {
+    return rndPnt(origin.lat());
 }
 
-function rndLng() {
-    return rndPnt(-6.513101);
+function rndLng(origin) {
+    return rndPnt(origin.lng());
 }
 
 function rndIco() {
@@ -25,58 +25,57 @@ function rndCap() {
 }
 
 function isMatching(place) {
-    if (isNaN(max))
-        return true;
-    else
-        return parseInt(place.label) <= max;
+    return isNaN(this) || parseInt(place.label) <= parseInt(this);
 }
 
-var places = [];
-var map = {};
-var max = 4;
-var markers = [];
-
 function initMap() {
-    var dublin = new google.maps.LatLng(53.372247, -6.513101);
+    var origin = new google.maps.LatLng(53.352247, -6.263101); //new google.maps.LatLng(53.372247, -6.513101);
 
     // Create a map object and specify the DOM element for display.
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: dublin,
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: origin,
         scrollwheel: false,
         streetViewControl: false,
         zoom: 16
     });
 
-    loadData();
+    var places = loadData(map, origin);
 
-	filterData();
+	var markers = filterData(map, places, 4, markers);
 
-    //showDirections();
+    var buttons = document.getElementsByClassName('button')
+
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function(evt) {
+            markers = filterData(map, places, evt.target.value, markers);
+        });
+    }
+
+    //showDirections(map);
 }
 
-function loadData() {
+function loadData(map, origin) {
+    var places = [];
     for (var i = 0; i < 32; i++) {
         places.push({
-            position: new google.maps.LatLng(rndLat(), rndLng()),
+            position: new google.maps.LatLng(rndLat(origin), rndLng(origin)),
             map: map,
             //icon: rndIco(),
             label: rndCap()
         });
 	}
+	return places;
 }
 
-function filterData(filter) {
-    max = filter;
-    var filtered = places.filter(isMatching);
+function filterData(map, places, filter, markers) {
+    var filtered = places.filter(isMatching, filter);
     //var filtered = places;
-    markers.forEach(function (marker){
-        marker.setVisible(false);
-    });
-    fitBounds(filtered);
-    drawMarkers(filtered);
+    fitBounds(map, filtered);
+    markers = drawMarkers(filtered, markers);
+    return markers;
 }
 
-function fitBounds(filtered) {
+function fitBounds(map, filtered) {
 	var latlngbounds = new google.maps.LatLngBounds();
 
     for (var i = 0; i < filtered.length; i++) {
@@ -85,13 +84,20 @@ function fitBounds(filtered) {
 	map.fitBounds(latlngbounds);
 }
 
-function drawMarkers(filtered) {
+function drawMarkers(filtered, markers) {
+    if (markers instanceof Array) {
+        markers.forEach(function (marker){
+            marker.setVisible(false);
+        });
+    }
+    markers = [];
     for (var i = 0; i < filtered.length; i++) {
 	    markers.push(new google.maps.Marker(filtered[i]));
 	}
+	return markers;
 }
 
-function showDirections() {
+function showDirections(map) {
     var chicago = new google.maps.LatLng(41.85, -87.65);
     var indianapolis = new google.maps.LatLng(39.79, -86.14);
 
