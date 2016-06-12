@@ -8,12 +8,12 @@ function rndPnt(i) {
     return i + Math.random() / factor;
 }
 
-function rndLat() {
-    return rndPnt(53.372247);
+function rndLat(origin) {
+    return rndPnt(origin.lat());
 }
 
-function rndLng() {
-    return rndPnt(-6.513101);
+function rndLng(origin) {
+    return rndPnt(origin.lng());
 }
 
 function rndIco() {
@@ -25,58 +25,66 @@ function rndCap() {
 }
 
 function isMatching(place) {
-    if (isNaN(max))
-        return true;
-    else
-        return parseInt(place.label) <= max;
+    return isNaN(this) || parseInt(place.label) <= parseInt(this);
 }
 
-var places = [];
-var map = {};
-var max = 4;
-var markers = [];
-
 function initMap() {
-    var dublin = new google.maps.LatLng(53.372247, -6.513101);
+    var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
 
     // Create a map object and specify the DOM element for display.
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: dublin,
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: origin,
         scrollwheel: false,
         streetViewControl: false,
         zoom: 16
     });
 
-    loadData();
+    var markers = [];
 
-	filterData();
+    var places = loadData(map, origin);
 
-    //showDirections();
+    var buttons = document.getElementsByClassName('button');
+
+	var directionsDisplay = filterData(map, places, 4);
+
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function(evt) {
+            directionsDisplay = filterData(map, places, evt.target.value, markers, directionsDisplay);
+        });
+    }
 }
 
-function loadData() {
-    for (var i = 0; i < 32; i++) {
+function loadData(map, origin) {
+    var places = [];
+    places.push({
+            position: origin,
+            map: map,
+            //icon: rndIco(),
+            label: "Origin"
+        });
+
+    for (var i = 0; i < 8; i++) {
         places.push({
-            position: new google.maps.LatLng(rndLat(), rndLng()),
+            position: new google.maps.LatLng(rndLat(origin), rndLng(origin)),
             map: map,
             //icon: rndIco(),
             label: rndCap()
         });
 	}
+	return places;
 }
 
-function filterData(filter) {
-    max = filter;
-    var filtered = places.filter(isMatching);
+function filterData(map, places, filter, markers, directionsDisplay) {
+    var filtered = places.filter(isMatching, filter);
     //var filtered = places;
-    markers.forEach(function (marker){
-        marker.setVisible(false);
-    });
-    fitBounds(filtered);
-    drawMarkers(filtered);
+    fitBounds(map, filtered);
+    //markers = drawMarkers(filtered, markers);
+
+    directionsDisplay = showDirections(map, places[0].position, filtered, directionsDisplay);
+    return directionsDisplay;
 }
 
-function fitBounds(filtered) {
+function fitBounds(map, filtered) {
 	var latlngbounds = new google.maps.LatLngBounds();
 
     for (var i = 0; i < filtered.length; i++) {
@@ -85,33 +93,67 @@ function fitBounds(filtered) {
 	map.fitBounds(latlngbounds);
 }
 
-function drawMarkers(filtered) {
+function drawMarkers(filtered, markers) {
+    markers = clearMarkers(markers);
     for (var i = 0; i < filtered.length; i++) {
 	    markers.push(new google.maps.Marker(filtered[i]));
 	}
+	return markers;
 }
 
-function showDirections() {
-    var chicago = new google.maps.LatLng(41.85, -87.65);
-    var indianapolis = new google.maps.LatLng(39.79, -86.14);
+function clearMarkers(markers) {
+    if (markers instanceof Array) {
+        markers.forEach(function (marker){
+            marker.setVisible(false);
+        });
+    }
+    markers = [];
+    return markers;
+}
+
+function showDirections(map, origin, filtered, directionsDisplay) {
+    var waypoints = [];
+    console.log(filtered.length)
+    for (var i = 0; i < 8 && i < filtered.length; i++) {
+        console.log(i + " " + filtered[i].label);
+        waypoints.push({
+            location: filtered[i].position
+        })
+    }
 
     // Set destination, origin and travel mode.
     var request = {
-        destination: indianapolis,
-        origin: chicago,
-        travelMode: google.maps.TravelMode.DRIVING
+      origin: origin,
+      destination: origin,
+      waypoints: waypoints,
+      provideRouteAlternatives: false,
+      optimizeWaypoints: true,
+      travelMode: google.maps.TravelMode.DRIVING,
+      drivingOptions: {
+        departureTime: new Date(/* now, or future date */),
+        trafficModel: google.maps.TrafficModel.PESSIMISTIC
+      }/*,
+      unitSystem: UnitSystem.IMPERIAL*/
     };
 
-    var directionsDisplay = new google.maps.DirectionsRenderer({
+    if(directionsDisplay !== undefined) {
+        directionsDisplay.setMap(null);
+    }
+
+    directionsDisplay = new google.maps.DirectionsRenderer({
         map: map
     });
 
     // Pass the directions request to the directions service.
     var directionsService = new google.maps.DirectionsService();
     directionsService.route(request, function(response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
+        if (status === google.maps.DirectionsStatus.OK) {
             // Display the route on the map.
             directionsDisplay.setDirections(response);
+        } else {
+            alert('Could not display directions due to: ' + status);
         }
     });
+
+    return directionsDisplay;
 }
