@@ -29,7 +29,7 @@ function isMatching(place) {
 }
 
 function initMap() {
-    var origin = new google.maps.LatLng(53.352247, -6.263101); //new google.maps.LatLng(53.372247, -6.513101);
+    var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
 
     // Create a map object and specify the DOM element for display.
     var map = new google.maps.Map(document.getElementById('map'), {
