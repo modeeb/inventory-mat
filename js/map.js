@@ -39,15 +39,17 @@ function initMap() {
         zoom: 16
     });
 
+    var markers = [];
+
     var places = loadData(map, origin);
 
-	var markers = filterData(map, places, 4, markers);
+    var buttons = document.getElementsByClassName('button');
 
-    var buttons = document.getElementsByClassName('button')
+	var directionsDisplay = filterData(map, places, 4);
 
     for (var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener('click', function(evt) {
-            markers = filterData(map, places, evt.target.value, markers);
+            directionsDisplay = filterData(map, places, evt.target.value, markers, directionsDisplay);
         });
     }
 }
@@ -72,13 +74,14 @@ function loadData(map, origin) {
 	return places;
 }
 
-function filterData(map, places, filter, markers) {
+function filterData(map, places, filter, markers, directionsDisplay) {
     var filtered = places.filter(isMatching, filter);
     //var filtered = places;
     fitBounds(map, filtered);
     //markers = drawMarkers(filtered, markers);
-    showDirections(map, places[0].position, filtered);
-    return markers;
+
+    directionsDisplay = showDirections(map, places[0].position, filtered, directionsDisplay);
+    return directionsDisplay;
 }
 
 function fitBounds(map, filtered) {
@@ -91,25 +94,33 @@ function fitBounds(map, filtered) {
 }
 
 function drawMarkers(filtered, markers) {
-    if (markers instanceof Array) {
-        markers.forEach(function (marker){
-            marker.setVisible(false);
-        });
-    }
-    markers = [];
+    markers = clearMarkers(markers);
     for (var i = 0; i < filtered.length; i++) {
 	    markers.push(new google.maps.Marker(filtered[i]));
 	}
 	return markers;
 }
 
-function showDirections(map, origin, filtered) {
+function clearMarkers(markers) {
+    if (markers instanceof Array) {
+        markers.forEach(function (marker){
+            marker.setVisible(false);
+        });
+    }
+    markers = [];
+    return markers;
+}
+
+function showDirections(map, origin, filtered, directionsDisplay) {
     var waypoints = [];
+    console.log(filtered.length)
     for (var i = 0; i < 8 && i < filtered.length; i++) {
+        console.log(i + " " + filtered[i].label);
         waypoints.push({
             location: filtered[i].position
         })
     }
+
     // Set destination, origin and travel mode.
     var request = {
       origin: origin,
@@ -125,7 +136,11 @@ function showDirections(map, origin, filtered) {
       unitSystem: UnitSystem.IMPERIAL*/
     };
 
-    var directionsDisplay = new google.maps.DirectionsRenderer({
+    if(directionsDisplay !== undefined) {
+        directionsDisplay.setMap(null);
+    }
+
+    directionsDisplay = new google.maps.DirectionsRenderer({
         map: map
     });
 
@@ -139,4 +154,6 @@ function showDirections(map, origin, filtered) {
             alert('Could not display directions due to: ' + status);
         }
     });
+
+    return directionsDisplay;
 }
