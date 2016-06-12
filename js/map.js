@@ -50,13 +50,18 @@ function initMap() {
             markers = filterData(map, places, evt.target.value, markers);
         });
     }
-
-    //showDirections(map);
 }
 
 function loadData(map, origin) {
     var places = [];
-    for (var i = 0; i < 32; i++) {
+    places.push({
+            position: origin,
+            map: map,
+            //icon: rndIco(),
+            label: "Origin"
+        });
+
+    for (var i = 0; i < 8; i++) {
         places.push({
             position: new google.maps.LatLng(rndLat(origin), rndLng(origin)),
             map: map,
@@ -71,7 +76,8 @@ function filterData(map, places, filter, markers) {
     var filtered = places.filter(isMatching, filter);
     //var filtered = places;
     fitBounds(map, filtered);
-    markers = drawMarkers(filtered, markers);
+    //markers = drawMarkers(filtered, markers);
+    showDirections(map, places[0].position, filtered);
     return markers;
 }
 
@@ -97,15 +103,26 @@ function drawMarkers(filtered, markers) {
 	return markers;
 }
 
-function showDirections(map) {
-    var chicago = new google.maps.LatLng(41.85, -87.65);
-    var indianapolis = new google.maps.LatLng(39.79, -86.14);
-
+function showDirections(map, origin, filtered) {
+    var waypoints = [];
+    for (var i = 0; i < 8 && i < filtered.length; i++) {
+        waypoints.push({
+            location: filtered[i].position
+        })
+    }
     // Set destination, origin and travel mode.
     var request = {
-        destination: indianapolis,
-        origin: chicago,
-        travelMode: google.maps.TravelMode.DRIVING
+      origin: origin,
+      destination: origin,
+      waypoints: waypoints,
+      provideRouteAlternatives: false,
+      optimizeWaypoints: true,
+      travelMode: google.maps.TravelMode.DRIVING,
+      drivingOptions: {
+        departureTime: new Date(/* now, or future date */),
+        trafficModel: google.maps.TrafficModel.PESSIMISTIC
+      }/*,
+      unitSystem: UnitSystem.IMPERIAL*/
     };
 
     var directionsDisplay = new google.maps.DirectionsRenderer({
@@ -115,9 +132,11 @@ function showDirections(map) {
     // Pass the directions request to the directions service.
     var directionsService = new google.maps.DirectionsService();
     directionsService.route(request, function(response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
+        if (status === google.maps.DirectionsStatus.OK) {
             // Display the route on the map.
             directionsDisplay.setDirections(response);
+        } else {
+            alert('Could not display directions due to: ' + status);
         }
     });
 }
