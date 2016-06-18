@@ -1,0 +1,68 @@
+/*body.skin-1 {
+    background-color: #1885C7;
+}
+.skin-1 .nav > li.active {
+    background-color: #00557C;
+}*/
+.ibox-heading .h3 {
+  margin-top: 5px;
+  font-weight: 200;
+  font-size: 24px;
+}
+#floatcenter {
+	margin:0 auto;
+	position:relative;
+	text-align:left;
+	width: 960px;
+}
+
+#rainfall3 {
+    width    : 680px;
+    height   : 480px;
+    overflow : hidden;
+    position : relative;
+}
+#rainfall3 .map {
+    position : absolute;
+    top      : -220px;
+    left     : -380px;
+    width    : 1280px;
+    height   : 1200px;
+}
+#rainfall3 a {
+    position: absolute;
+    width: 50px;
+    height: 100px;
+    top: 400px;
+}
+#twitter-widget {
+    position: absolute;
+    z-index: 2;
+    top: 80px;
+    right: 20px;
+}
+#hashtag-widget {
+    position: relative;
+    z-index: 1;
+    top: -400px;
+}
+.theme-config-box > .spin-icon > .fa-spin {
+    animation: none;
+}
+#stadium {
+    width    : 595px;
+    height   : 635px;
+    overflow : hidden;
+    position : relative;
+}
+#stadium .flash {
+    position : absolute;
+    top      : -355px;
+    left     : -195px;
+    width    : 1280px;
+    height   : 1200px;
+}
+.fancybox img,
+.fancybox > img {
+    width: 100% !important;
+}

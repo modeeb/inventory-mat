@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+}
+#map {
+    height: 100%;
+}
+
+#wrapper {
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+
+#wrapper > .navbar-default {
+    background-color: #2f4050;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
+}
+
+.skin-1 > #wrapper > .navbar-default {
+    background-color: #3E495F; /*#1885C7;*/
+    height: 100%;
+}
+
+.skin-3 > #wrapper > .navbar-default {
+    background-color: #38283c;
+    height: 100%;
+}
+
+#wrapper > #page-wrappers {
+    background-color: transparent;
+    height: 100%;
+    position: absolute;
+    top: 0;
+}
+
+#panel {
+    position: absolute;
+    width: 300px;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.theme-config-box > .spin-icon > .fa-spin {
+    animation: none;
+}
+
+.widget-pane {
+    width: 220px;
+    position: absolute;
+    top: 0;
+    z-index: 3;
+    left: 0;
+    -webkit-transform: translateX(0px);
+    transform: translateX(0px);
+    transition-property: -webkit-transform,transform,opacity;
+    transition-duration: 0.2s;
+    transition-timing-function: cubic-bezier(0.0,0.0,0.2,1);
+}
+
+.pane-collapsed-mode .widget-pane {
+    box-shadow: none;
+    -webkit-transform: translateX(-408px);
+    transform: translateX(-408px);
+}
+
+.widget-pane-visible {
+    opacity: 1;
+    height: 100%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.widget-pane-visible .widget-pane-toggle-button-container {
+    display: block;
+}
+
+.widget-pane-toggle-button-container {
+    position: absolute;
+    z-index: 5;
+    top: 8px;
+    left: 100%;
+}
+
+.widget-pane-toggle-button.navbar-minimalize {
+    width: 23px;
+    height: 48px;
+    border: 0;
+    cursor: pointer;
+    background: rgba(255,255,255,0.9) url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAUCAQAAAAXDMSnAAAAi0lEQVR4AX3JQcqBURQG4O/+9WNG30D3vOfSDTuQsgcZyBakZANSzMVMBme3zsBI5/VMn4ZKLP5ki1E4tYejWpilxVUtzOEUD68odYmXR5BJNp/4zllXD2phllYvamHmirsayUkfJ5ruHzueTldC08kcT5YOY9xYujqQM03XKXuaLmEtNF1e1Nz89gbL+0do6OEwRwAAAABJRU5ErkJggg==) 7px center/7px 10px no-repeat;
+    border-left: 1px solid #D4D4D4;
+    box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
+}
+
+:focus {
+    outline: none;
+}
+
+html[dir='rtl'] .widget-pane-toggle-button,
+.widget-pane-collapsed .widget-pane-toggle-button,
+.mini-navbar .widget-pane-toggle-button {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}

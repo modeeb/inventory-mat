@@ -113,9 +113,9 @@ function clearMarkers(markers) {
 
 function showDirections(map, origin, filtered, directionsDisplay) {
     var waypoints = [];
-    console.log(filtered.length)
+    //console.log(filtered.length)
     for (var i = 0; i < 8 && i < filtered.length; i++) {
-        console.log(i + " " + filtered[i].label);
+        //console.log(i + " " + filtered[i].label);
         waypoints.push({
             location: filtered[i].position
         })
