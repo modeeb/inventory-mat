@@ -1,4 +1,5 @@
 /* global google */
+/* global setMax */
 
 // When the window has finished loading google map
 //google.maps.event.addDomListener(window, 'load', initMap);
@@ -60,7 +61,7 @@ function loadData(map, origin) {
             position: origin,
             map: map,
             //icon: rndIco(),
-            label: "Origin"
+            label: "0"
         });
 
     for (var i = 0; i < 8; i++) {
@@ -75,9 +76,10 @@ function loadData(map, origin) {
 }
 
 function filterData(map, places, filter, markers, directionsDisplay) {
+    setMax(filter);
+
     var filtered = places.filter(isMatching, filter);
-    //var filtered = places;
-    fitBounds(map, filtered);
+    //fitBounds(map, filtered);
     //markers = drawMarkers(filtered, markers);
 
     directionsDisplay = showDirections(map, places[0].position, filtered, directionsDisplay);

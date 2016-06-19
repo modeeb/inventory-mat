@@ -1,6 +1,7 @@
 body {
     margin: 0;
 }
+
 #map {
     height: 100%;
 }
@@ -9,6 +10,10 @@ body {
     position: absolute;
     top: 0;
     height: 100%;
+}
+
+#wrapper .nav > li > a {
+    padding: 10px 15px;
 }
 
 #wrapper > .navbar-default {
@@ -21,12 +26,16 @@ body {
 
 .skin-1 > #wrapper > .navbar-default {
     background-color: #3E495F; /*#1885C7;*/
-    height: 100%;
 }
 
 .skin-3 > #wrapper > .navbar-default {
     background-color: #38283c;
-    height: 100%;
+}
+
+#wrapper .nav-header {
+    /*padding: 35px 25px 25px 25px;*/
+    background-repeat: no-repeat;
+    color: white;
 }
 
 #wrapper > #page-wrappers {
@@ -34,6 +43,14 @@ body {
     height: 100%;
     position: absolute;
     top: 0;
+}
+
+.profile-element {
+    text-align: center;
+}
+
+.profile-element .img-circle {
+  border-radius: 5px;
 }
 
 #panel {
