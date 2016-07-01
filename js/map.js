@@ -1,8 +1,22 @@
 /* global google */
 /* global setMax */
+/* global navigator */
 
 // When the window has finished loading google map
 //google.maps.event.addDomListener(window, 'load', initMap);
+
+function initOrigin() {
+    var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
+
+    // Try W3C Geolocation (Preferred)
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            origin = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+            initMapWithOrigin(origin);
+        });
+    }
+    return origin;
+}
 
 function rndPnt(i) {
     var factor = Math.random() > .5 ? +50 : -50;
@@ -30,8 +44,10 @@ function isMatching(place) {
 }
 
 function initMap() {
-    var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
+    initOrigin();
+}
 
+function initMapWithOrigin(origin) {
     // Create a map object and specify the DOM element for display.
     var map = new google.maps.Map(document.getElementById('map'), {
         center: origin,
@@ -82,7 +98,7 @@ function filterData(map, places, filter, markers, directionsDisplay) {
     //fitBounds(map, filtered);
     //markers = drawMarkers(filtered, markers);
 
-    directionsDisplay = showDirections(map, places[0].position, filtered, directionsDisplay);
+    directionsDisplay = showDirections(map, places[0].position, filtered, directionsDisplay, markers);
     return directionsDisplay;
 }
 
@@ -113,7 +129,7 @@ function clearMarkers(markers) {
     return markers;
 }
 
-function showDirections(map, origin, filtered, directionsDisplay) {
+function showDirections(map, origin, filtered, directionsDisplay, markers) {
     var waypoints = [];
     //console.log(filtered.length)
     for (var i = 0; i < 8 && i < filtered.length; i++) {
@@ -143,19 +159,55 @@ function showDirections(map, origin, filtered, directionsDisplay) {
     }
 
     directionsDisplay = new google.maps.DirectionsRenderer({
-        map: map
+        map: map,
+        suppressMarkers: true
     });
+
+    // Instantiate an info window to hold step text.
+    var stepDisplay = new google.maps.InfoWindow();
 
     // Pass the directions request to the directions service.
     var directionsService = new google.maps.DirectionsService();
     directionsService.route(request, function(response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
+            // First, clear out any existing markers
+            markers = clearMarkers(markers);
+
             // Display the route on the map.
             directionsDisplay.setDirections(response);
+            showSteps(response, markers, stepDisplay, map);
         } else {
             alert('Could not display directions due to: ' + status);
         }
     });
 
     return directionsDisplay;
+}
+
+function showSteps(directionResult, markers, stepDisplay, map) {
+    var myRoute = directionResult.routes[0];
+
+    var marker = markers[0] = markers[0] || new google.maps.Marker({
+        position: myRoute.legs[0].start_location,
+        map: map,
+        icon: 'https://maps.google.com/mapfiles/ms/micons/truck.png'
+      });
+
+    for (var i = 1; i < myRoute.legs.length - 1; i++) {
+      marker = markers[i] = markers[i] || new google.maps.Marker({
+        position: myRoute.legs[i].end_location,
+        map: map,
+        icon: 'https://maps.google.com/mapfiles/ms/micons/green.png',
+        title: '100%'
+      });
+      attachInstructionText(
+          stepDisplay, marker, myRoute.legs[i].end_address, map);
+    }
+}
+
+function attachInstructionText(stepDisplay, marker, text, map) {
+  google.maps.event.addListener(marker, 'click', function() {
+    stepDisplay.setContent(text);
+    stepDisplay.open(map, marker);
+  });
 }
