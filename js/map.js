@@ -6,8 +6,6 @@
 //google.maps.event.addDomListener(window, 'load', initMap);
 
 function initOrigin() {
-    var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
-
     // Try W3C Geolocation (Preferred)
     if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -15,7 +13,10 @@ function initOrigin() {
             initMapWithOrigin(origin);
         });
     }
-    return origin;
+    else {
+        var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
+        initMapWithOrigin(origin);
+    }
 }
 
 function rndPnt(i) {
@@ -98,6 +99,9 @@ function filterData(map, places, filter, markers, directionsDisplay) {
     //fitBounds(map, filtered);
     //markers = drawMarkers(filtered, markers);
 
+    // First, clear out any existing markers
+    markers = clearMarkers(markers);
+
     directionsDisplay = showDirections(map, places[0].position, filtered, directionsDisplay, markers);
     return directionsDisplay;
 }
@@ -170,9 +174,6 @@ function showDirections(map, origin, filtered, directionsDisplay, markers) {
     var directionsService = new google.maps.DirectionsService();
     directionsService.route(request, function(response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
-            // First, clear out any existing markers
-            markers = clearMarkers(markers);
-
             // Display the route on the map.
             directionsDisplay.setDirections(response);
             showSteps(response, markers, stepDisplay, map);
@@ -193,15 +194,28 @@ function showSteps(directionResult, markers, stepDisplay, map) {
         icon: 'https://maps.google.com/mapfiles/ms/micons/truck.png'
       });
 
+    var duration = 0;
+
     for (var i = 1; i < myRoute.legs.length - 1; i++) {
-      marker = markers[i] = markers[i] || new google.maps.Marker({
-        position: myRoute.legs[i].end_location,
-        map: map,
-        icon: 'https://maps.google.com/mapfiles/ms/micons/green.png',
-        title: '100%'
-      });
-      attachInstructionText(
-          stepDisplay, marker, myRoute.legs[i].end_address, map);
+        marker = markers[i] = markers[i] || new google.maps.Marker({
+            position: myRoute.legs[i].end_location,
+            map: map,
+            //icon: 'https://maps.google.com/mapfiles/ms/micons/green.png',
+            title: '1',
+            label: "" + i
+        });
+
+        duration += myRoute.legs[i].duration.value;
+        var arrival_time = new Date(Date.now() + duration * 1000);
+
+        duration += 5 /* min */ * 60;
+        var loading_finish = new Date(Date.now() + duration * 1000);
+
+        var text = myRoute.legs[i].end_address;
+        text += '<br> <b>Arrival Time:</b> ' + arrival_time.toLocaleTimeString();
+        text += '<br> <b>Loading Finish:</b> ' + loading_finish.toLocaleTimeString();
+
+        attachInstructionText(stepDisplay, marker, text, map);
     }
 }
 
