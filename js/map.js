@@ -1,8 +1,23 @@
 /* global google */
 /* global setMax */
+/* global navigator */
 
 // When the window has finished loading google map
 //google.maps.event.addDomListener(window, 'load', initMap);
+
+function initOrigin() {
+    // Try W3C Geolocation (Preferred)
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            origin = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+            initMapWithOrigin(origin);
+        });
+    }
+    else {
+        var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
+        initMapWithOrigin(origin);
+    }
+}
 
 function rndPnt(i) {
     var factor = Math.random() > .5 ? +50 : -50;
@@ -30,27 +45,31 @@ function isMatching(place) {
 }
 
 function initMap() {
-    var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
+    initOrigin();
+}
+
+function initMapWithOrigin(origin) {
+    var pathData = {};
 
     // Create a map object and specify the DOM element for display.
-    var map = new google.maps.Map(document.getElementById('map'), {
+    pathData.map = new google.maps.Map(document.getElementById('map'), {
         center: origin,
         scrollwheel: false,
         streetViewControl: false,
         zoom: 16
-    });
+    }),
 
-    var markers = [];
+    pathData.markers = [];
 
-    var places = loadData(map, origin);
+    pathData.places = loadData(pathData.map, origin);
 
     var buttons = document.getElementsByClassName('button');
 
-	var directionsDisplay = filterData(map, places, 4);
+	pathData = filterData(pathData, 4);
 
     for (var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener('click', function(evt) {
-            directionsDisplay = filterData(map, places, evt.target.value, markers, directionsDisplay);
+            pathData = filterData(pathData, evt.target.value);
         });
     }
 }
@@ -75,15 +94,18 @@ function loadData(map, origin) {
 	return places;
 }
 
-function filterData(map, places, filter, markers, directionsDisplay) {
+function filterData(pathData, filter) {
     setMax(filter);
 
-    var filtered = places.filter(isMatching, filter);
+    var filtered = pathData.places.filter(isMatching, filter);
     //fitBounds(map, filtered);
     //markers = drawMarkers(filtered, markers);
 
-    directionsDisplay = showDirections(map, places[0].position, filtered, directionsDisplay);
-    return directionsDisplay;
+    // First, clear out any existing markers
+    pathData.markers = clearMarkers(pathData.markers);
+
+    pathData = showDirections(pathData, filtered);
+    return pathData;
 }
 
 function fitBounds(map, filtered) {
@@ -113,7 +135,8 @@ function clearMarkers(markers) {
     return markers;
 }
 
-function showDirections(map, origin, filtered, directionsDisplay) {
+function showDirections(pathData, filtered) {
+    var origin = pathData.places[0].position;
     var waypoints = [];
     //console.log(filtered.length)
     for (var i = 0; i < 8 && i < filtered.length; i++) {
@@ -138,24 +161,70 @@ function showDirections(map, origin, filtered, directionsDisplay) {
       unitSystem: UnitSystem.IMPERIAL*/
     };
 
-    if(directionsDisplay !== undefined) {
-        directionsDisplay.setMap(null);
+    if(pathData.directionsDisplay !== undefined) {
+        pathData.directionsDisplay.setMap(null);
     }
 
-    directionsDisplay = new google.maps.DirectionsRenderer({
-        map: map
+    pathData.directionsDisplay = new google.maps.DirectionsRenderer({
+        map: pathData.map,
+        suppressMarkers: true
     });
+
+    // Instantiate an info window to hold step text.
+    pathData.stepDisplay = new google.maps.InfoWindow();
 
     // Pass the directions request to the directions service.
     var directionsService = new google.maps.DirectionsService();
     directionsService.route(request, function(response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
             // Display the route on the map.
-            directionsDisplay.setDirections(response);
+            pathData.directionsDisplay.setDirections(response);
+            showSteps(response, pathData);
         } else {
             alert('Could not display directions due to: ' + status);
         }
     });
 
-    return directionsDisplay;
+    return pathData;
+}
+
+function showSteps(directionResult, pathData) {
+    var myRoute = directionResult.routes[0];
+
+    var marker = pathData.markers[0] = pathData.markers[0] || new google.maps.Marker({
+        position: myRoute.legs[0].start_location,
+        map: pathData.map,
+        icon: 'https://maps.google.com/mapfiles/ms/micons/truck.png'
+      });
+
+    var duration = 0;
+
+    for (var i = 1; i < myRoute.legs.length - 2; i++) {
+        marker = pathData.markers[i] = pathData.markers[i] || new google.maps.Marker({
+            position: myRoute.legs[i].end_location,
+            map: pathData.map,
+            //icon: 'https://maps.google.com/mapfiles/ms/micons/green.png',
+            title: '1',
+            label: "" + i
+        });
+
+        duration += myRoute.legs[i].duration.value;
+        var arrival_time = new Date(Date.now() + duration * 1000);
+
+        duration += 5 /* min */ * 60;
+        var loading_finish = new Date(Date.now() + duration * 1000);
+
+        var text = myRoute.legs[i].end_address;
+        text += '<br> <b>Arrival Time:</b> ' + arrival_time.toLocaleTimeString();
+        text += '<br> <b>Loading Finish:</b> ' + loading_finish.toLocaleTimeString();
+
+        attachInstructionText(pathData, marker, text);
+    }
+}
+
+function attachInstructionText(pathData, marker, text) {
+  google.maps.event.addListener(marker, 'click', function() {
+    pathData.stepDisplay.setContent(text);
+    pathData.stepDisplay.open(pathData.map, marker);
+  });
 }
