@@ -196,7 +196,7 @@ function showSteps(directionResult, markers, stepDisplay, map) {
 
     var duration = 0;
 
-    for (var i = 1; i < myRoute.legs.length - 1; i++) {
+    for (var i = 1; i < myRoute.legs.length - 2; i++) {
         marker = markers[i] = markers[i] || new google.maps.Marker({
             position: myRoute.legs[i].end_location,
             map: map,
