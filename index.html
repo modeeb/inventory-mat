@@ -57,7 +57,7 @@
             <li>
               <a href="#">
                 <img src="https://maps.google.com/mapfiles/ms/micons/truck.png"></img>
-                <span class="nav-label">Starting location</span>
+                <span class="nav-label">Current Location</span>
               </a>
             </li>
             <li>
@@ -66,16 +66,42 @@
                 <span class="nav-label">Stock Level &lt; or = <span id="max"></span>%</span>
               </a>
             </li>
-            <li class="btn-group" role="group">
+            <li>
               <a href="#">
-              <!--button id="filter0" value="0" class="button btn btn-primary fa fa-battery-empty"></button-->
-              <button id="filter1" value="1" class="button btn fa fa-battery-quarter"></button>
-              <button id="filter2" value="2" class="button btn fa fa-battery-half"></button>
-              <button id="filter3" value="3" class="button btn fa fa-battery-three-quarters"></button>
-              <button id="filter4" value="4" class="button btn fa fa-battery-full"></button>
+                <i class="fa fa-filter fa-2x"></i><span class="nav-label">Filter</span>
               </a>
             </li>
+            <li class="btn-group" role="group">
+              <a href="#">
+                <!--button id="filter0" value="0" class="button btn btn-primary fa fa-battery-empty"></button-->
+                <button id="filter1" value="1" class="button btn fa fa-battery-quarter"></button>
+                <button id="filter2" value="2" class="button btn fa fa-battery-half"></button>
+                <button id="filter3" value="3" class="button btn fa fa-battery-three-quarters"></button>
+                <button id="filter4" value="4" class="button btn fa fa-battery-full"></button>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="nav-label center">Delivery Schedule</span>
+              </a>
+            </li>
+            <li class="nav-label">
+              <table id="schedule">
+                <tr>
+                  <td>#</td>
+                  <td>Time</td>
+                  <td>ID</td>
+                  <td>Qty Req.</td>
+                  <td>Avail.</td>
+                </tr>
+              </table>
+            </li>
           </ul>
+          <div class="footer nav-label">
+            <div>
+              Units on truck <strong><span id="qty"></span></strong>
+            </div>
+          </div>
           <div class="widget-pane-toggle-button-container">
             <button class="widget-pane-toggle-button navbar-minimalize"></button>
           </div>
