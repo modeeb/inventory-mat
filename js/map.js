@@ -40,8 +40,12 @@ function rndIco() {
     return "./SVG/battery-" + Math.floor(Math.random() * 4.9) + ".svg";
 }
 
-function rndLvl() {
-    return "" + Math.floor(Math.random() * 99);
+function rndLvl(qty) {
+    return "" + Math.floor(Math.floor(Math.random() * qty) / qty * 100);
+}
+
+function rndQty() {
+    return Math.round(Math.abs(Math.random() * 100)) + 20;
 }
 
 function isMatching(place) {
@@ -93,16 +97,17 @@ function loadData(origin) {
         });
 
     for (var i = 1; i < 80; i++) {
+        var qty = rndQty();
         places.push({
             //position: new google.maps.LatLng(rndLat(origin), rndLng(origin)),
             //map: map,
             //icon: rndIco(),
             //label: rndLvl()
-            id: i,
+            id: "P" + i,
             longitude: rndLng(origin),
             latitude: rndLat(origin),
-            quantity: Math.round(Math.abs(rndPnt(0) * 10000)),
-            level: rndLvl()
+            quantity: qty,
+            level: rndLvl(qty)
         });
 	}
 	return places;
@@ -230,6 +235,7 @@ function showSteps(directionResult, pathData) {
         var loading_finish = new Date(Date.now() + duration * 1000);
 
         var text = myRoute.legs[i].end_address;
+        text += '<br> <b>ID:</b> ' + place.id;
         text += '<br> <b>Arrival Time:</b> ' + arrival_time.toLocaleTimeString();
         text += '<br> <b>Loading Finish:</b> ' + loading_finish.toLocaleTimeString();
         text += '<br> <b>Quantity:</b> ' + place.quantity;
