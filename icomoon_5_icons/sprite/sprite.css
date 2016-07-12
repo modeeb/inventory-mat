@@ -1,0 +1,31 @@
+.icon {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-image: url(sprite.svg);
+}
+.icon-battery-2 {
+    width: 41px;
+    height: 32px;
+    background-position: 0 0;
+}
+.icon-battery-4 {
+    width: 41px;
+    height: 32px;
+    background-position: -66px 0;
+}
+.icon-battery-0 {
+    width: 41px;
+    height: 32px;
+    background-position: 0 -33px;
+}
+.icon-battery-1 {
+    width: 41px;
+    height: 32px;
+    background-position: -66px -33px;
+}
+.icon-battery-3 {
+    width: 41px;
+    height: 32px;
+    background-position: 0 -66px;
+}
+
