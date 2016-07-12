@@ -121,3 +121,9 @@ html[dir='rtl'] .widget-pane-toggle-button,
     -webkit-transform: scaleX(-1);
     transform: scaleX(-1);
 }
+
+#schedule, #schedule td {
+    border: solid 2px white;
+    color: white;
+    padding: 2px;
+}
