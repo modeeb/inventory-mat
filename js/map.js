@@ -32,16 +32,20 @@ function rndLng(origin) {
     return rndPnt(origin.lng());
 }
 
+function toLatLng(place) {
+    return {lat: place.latitude, lng: place.longitude};
+}
+
 function rndIco() {
     return "./SVG/battery-" + Math.floor(Math.random() * 4.9) + ".svg";
 }
 
-function rndCap() {
-    return "" + Math.floor(Math.random() * 4.9);
+function rndLvl() {
+    return "" + Math.floor(Math.random() * 99);
 }
 
 function isMatching(place) {
-    return isNaN(this) || parseInt(place.label) <= parseInt(this);
+    return isNaN(this) || parseInt(place.level) / 20 <= this;
 }
 
 function initMap() {
@@ -49,7 +53,9 @@ function initMap() {
 }
 
 function initMapWithOrigin(origin) {
-    var pathData = {};
+    var pathData = {
+        origin: origin
+    };
 
     // Create a map object and specify the DOM element for display.
     pathData.map = new google.maps.Map(document.getElementById('map'), {
@@ -61,7 +67,7 @@ function initMapWithOrigin(origin) {
 
     pathData.markers = [];
 
-    pathData.places = loadData(pathData.map, origin);
+    pathData.places = loadData(origin);
 
     var buttons = document.getElementsByClassName('button');
 
@@ -74,21 +80,29 @@ function initMapWithOrigin(origin) {
     }
 }
 
-function loadData(map, origin) {
+function loadData(origin) {
+    //<ID>, <Longitude>, <Latitude>, <Quantity> <Stock Level as of DateTime>
+
     var places = [];
     places.push({
-            position: origin,
-            map: map,
-            //icon: rndIco(),
-            label: "0"
+            id: 0,
+            longitude: origin.lng(),
+            latitude: origin.lat(),
+            qty: 600,
+            level: "0"
         });
 
-    for (var i = 0; i < 8; i++) {
+    for (var i = 1; i < 80; i++) {
         places.push({
-            position: new google.maps.LatLng(rndLat(origin), rndLng(origin)),
-            map: map,
+            //position: new google.maps.LatLng(rndLat(origin), rndLng(origin)),
+            //map: map,
             //icon: rndIco(),
-            label: rndCap()
+            //label: rndLvl()
+            id: i,
+            longitude: rndLng(origin),
+            latitude: rndLat(origin),
+            quantity: Math.round(Math.abs(rndPnt(0) * 10000)),
+            level: rndLvl()
         });
 	}
 	return places;
@@ -97,14 +111,14 @@ function loadData(map, origin) {
 function filterData(pathData, filter) {
     setMax(filter);
 
-    var filtered = pathData.places.filter(isMatching, filter);
+   pathData.filtered = pathData.places.filter(isMatching, filter);
     //fitBounds(map, filtered);
     //markers = drawMarkers(filtered, markers);
 
     // First, clear out any existing markers
     pathData.markers = clearMarkers(pathData.markers);
 
-    pathData = showDirections(pathData, filtered);
+    pathData = showDirections(pathData);
     return pathData;
 }
 
@@ -135,21 +149,20 @@ function clearMarkers(markers) {
     return markers;
 }
 
-function showDirections(pathData, filtered) {
-    var origin = pathData.places[0].position;
+function showDirections(pathData) {
     var waypoints = [];
     //console.log(filtered.length)
-    for (var i = 0; i < 8 && i < filtered.length; i++) {
+    for (var i = 1; i < 9 && i < pathData.filtered.length; i++) {
         //console.log(i + " " + filtered[i].label);
         waypoints.push({
-            location: filtered[i].position
-        })
+            location: toLatLng(pathData.filtered[i])
+        });
     }
 
     // Set destination, origin and travel mode.
     var request = {
-      origin: origin,
-      destination: origin,
+      origin: pathData.origin,
+      destination: pathData.origin,
       waypoints: waypoints,
       provideRouteAlternatives: false,
       optimizeWaypoints: true,
@@ -192,20 +205,22 @@ function showSteps(directionResult, pathData) {
     var myRoute = directionResult.routes[0];
 
     var marker = pathData.markers[0] = pathData.markers[0] || new google.maps.Marker({
-        position: myRoute.legs[0].start_location,
+        position: pathData.origin,
         map: pathData.map,
         icon: 'https://maps.google.com/mapfiles/ms/micons/truck.png'
       });
 
     var duration = 0;
 
-    for (var i = 1; i < myRoute.legs.length - 2; i++) {
-        marker = pathData.markers[i] = pathData.markers[i] || new google.maps.Marker({
+    for (var i = 0; i < myRoute.legs.length - 1; i++) {
+        var place = pathData.filtered[myRoute.waypoint_order[i] + 1];
+
+        marker = pathData.markers[i + 1] = pathData.markers[i + 1] || new google.maps.Marker({
             position: myRoute.legs[i].end_location,
             map: pathData.map,
             //icon: 'https://maps.google.com/mapfiles/ms/micons/green.png',
-            title: '1',
-            label: "" + i
+            title: "" + place.id,
+            label: "" + (i + 1)
         });
 
         duration += myRoute.legs[i].duration.value;
@@ -217,6 +232,8 @@ function showSteps(directionResult, pathData) {
         var text = myRoute.legs[i].end_address;
         text += '<br> <b>Arrival Time:</b> ' + arrival_time.toLocaleTimeString();
         text += '<br> <b>Loading Finish:</b> ' + loading_finish.toLocaleTimeString();
+        text += '<br> <b>Quantity:</b> ' + place.quantity;
+        text += '<br> <b>Stock Level:</b> ' + place.level + "%";
 
         attachInstructionText(pathData, marker, text);
     }
