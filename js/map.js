@@ -29,6 +29,10 @@ function isMatching(place) {
     return isNaN(this) || parseInt(place.label) <= parseInt(this);
 }
 
+function compareLvl(p1, p2) {
+    return p2.level - p1.level; // sort descending
+}
+
 function initMap() {
     var origin = new google.maps.LatLng(53.349445, -6.259668); //new google.maps.LatLng(53.372247, -6.513101);
 
@@ -61,7 +65,7 @@ function loadData(map, origin) {
             position: origin,
             map: map,
             //icon: rndIco(),
-            label: "0"
+            label: 0
         });
 
     for (var i = 0; i < 8; i++) {
@@ -79,6 +83,7 @@ function filterData(map, places, filter, markers, directionsDisplay) {
     setMax(filter);
 
     var filtered = places.filter(isMatching, filter);
+    filtered.sort(compareLvl);
     //fitBounds(map, filtered);
     //markers = drawMarkers(filtered, markers);
 
