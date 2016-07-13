@@ -52,6 +52,10 @@ function isMatching(place) {
     return isNaN(this) || place.level / .20 <= this;
 }
 
+function compareLvl(p1, p2) {
+    return p2.level - p1.level; // sort descending
+}
+
 function initMap() {
     initOrigin();
 }
@@ -96,7 +100,7 @@ function loadData(origin) {
             longitude: origin.lng(),
             latitude: origin.lat(),
             quantity: 160,
-            level: "0"
+            level: 0
         });
 
     document.getElementById("qty").innerHTML = places[0].quantity;
@@ -122,6 +126,7 @@ function filterData(pathData, filter) {
     setMax(filter);
 
     pathData.filtered = pathData.places.filter(isMatching, filter);
+    pathData.filtered.sort(compareLvl);
     //fitBounds(map, filtered);
     drawMarkers(pathData);
 
