@@ -48,8 +48,12 @@ function rndQty() {
     return Math.round(Math.abs(Math.random() * 100)) + 20;
 }
 
+function isFiltered(place, filter) {
+    return place.level / .25 <= filter;
+}
+
 function isMatching(place) {
-    return isNaN(this) || place.level / .20 <= this;
+    return isNaN(this) || isFiltered(place, this);
 }
 
 function compareLvl(p1, p2) {
@@ -128,7 +132,7 @@ function filterData(pathData, filter) {
     pathData.filtered = pathData.places.filter(isMatching, filter);
     pathData.filtered.sort(compareLvl);
     //fitBounds(map, filtered);
-    drawMarkers(pathData);
+    drawMarkers(pathData, filter);
 
     // First, clear out any existing markers
     pathData.markers = clearMarkers(pathData.markers);
@@ -152,14 +156,16 @@ function fitBounds(pathData) {
 	pathData.map.fitBounds(latlngbounds);
 }
 
-function drawMarkers(pathData) {
+function drawMarkers(pathData, filter) {
     for (var i = 1; i < pathData.places.length; i++) {
         var place = pathData.places[i];
+        var strokeColor = isFiltered(place, filter) ? "black" : "gray";
         var marker = new google.maps.Marker({
             position: toLatLng(place),
             icon: {
                 path: google.maps.SymbolPath.CIRCLE,
-                scale: 4
+                scale: 4,
+                strokeColor: strokeColor
             },
             map: pathData.map,
             title: place.id

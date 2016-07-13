@@ -126,4 +126,5 @@ html[dir='rtl'] .widget-pane-toggle-button,
     border: solid 2px white;
     color: white;
     padding: 2px;
+    font-size: smaller;
 }
