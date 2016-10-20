@@ -12,7 +12,8 @@ namespace SimulatedDevice
     {
         static DeviceClient deviceClient;
         static string iotHubUri = "qtmatters.azure-devices.net";
-        static string deviceKey = "wnHdr7xS9fAyLJOIZ3YjFa8qVdniW4ItkUdwG8mqQo8=";
+        static string deviceId = "inventory-mat";
+        static string deviceKey = "kD+P3NBu2tQ0Db9D/6vQX9Z3zgNSkHJGwiPL1i5w7LE=";
 
         private static async void SendDeviceToCloudMessagesAsync()
         {
@@ -25,7 +26,7 @@ namespace SimulatedDevice
 
                 var telemetryDataPoint = new
                 {
-                    deviceId = "myFirstDevice",
+                    deviceId = deviceId,
                     windSpeed = currentWindSpeed
                 };
                 var messageString = JsonConvert.SerializeObject(telemetryDataPoint);
@@ -38,12 +39,29 @@ namespace SimulatedDevice
             }
         }
 
+        private static async void SendDeviceToCloudInteractiveMessagesAsync()
+        {
+            while (true)
+            {
+                var interactiveMessageString = "Alert message!";
+                var interactiveMessage = new Message(Encoding.ASCII.GetBytes(interactiveMessageString));
+                interactiveMessage.Properties["messageType"] = "interactive";
+                interactiveMessage.MessageId = Guid.NewGuid().ToString();
+
+                await deviceClient.SendEventAsync(interactiveMessage);
+                Console.WriteLine("{0} > Sending interactive message: {1}", DateTime.Now, interactiveMessageString);
+
+                Task.Delay(10000).Wait();
+            }
+        }
+
         static void Main(string[] args)
         {
             Console.WriteLine("Simulated device\n");
-            deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey("myFirstDevice", deviceKey));
+            deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey));
 
-            SendDeviceToCloudMessagesAsync();
+            //SendDeviceToCloudMessagesAsync();
+            SendDeviceToCloudInteractiveMessagesAsync();
             Console.ReadLine();
         }
     }

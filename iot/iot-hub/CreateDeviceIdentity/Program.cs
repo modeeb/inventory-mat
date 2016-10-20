@@ -16,7 +16,7 @@ namespace CreateDeviceIdentity
 
         private static async Task AddDeviceAsync()
         {
-            string deviceId = "myFirstDevice";
+            string deviceId = "inventory-mat";
             Device device = null;
             ExceptionDispatchInfo capturedException = null;
 

@@ -16,7 +16,7 @@ namespace ReadDeviceToCloudMessages
 
         private static async Task ReceiveMessagesFromDeviceAsync(string partition, CancellationToken ct)
         {
-            var eventHubReceiver = eventHubClient.GetDefaultConsumerGroup().CreateReceiver(partition, DateTime.UtcNow);
+            var eventHubReceiver = eventHubClient.GetDefaultConsumerGroup().CreateReceiver(partition);
             while (true)
             {
                 if (ct.IsCancellationRequested) break;
@@ -30,11 +30,30 @@ namespace ReadDeviceToCloudMessages
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Receive messages. Ctrl-C to exit.\n");
+            CancellationToken ct = GetCancellationToken();
+
             eventHubClient = EventHubClient.CreateFromConnectionString(connectionString, iotHubD2cEndpoint);
 
+            var tasks = ReceiveMessagesFromDeviceAsync("1", ct);
+            //var tasks = ReceiveMessagesFromAllDevicesAsync(ref ct);
+            Task.WaitAll(tasks);
+        }
+
+        private static Task[] ReceiveMessagesFromAllDevicesAsync(ref CancellationToken ct)
+        {
             var d2cPartitions = eventHubClient.GetRuntimeInformation().PartitionIds;
 
+            var tasks = new List<Task>();
+            foreach (string partition in d2cPartitions)
+            {
+                tasks.Add(ReceiveMessagesFromDeviceAsync(partition, ct));
+            }
+            return tasks.ToArray();
+        }
+
+        private static CancellationToken GetCancellationToken()
+        {
+            Console.WriteLine("Receive messages. Ctrl-C to exit.\n");
             CancellationTokenSource cts = new CancellationTokenSource();
 
             System.Console.CancelKeyPress += (s, e) =>
@@ -43,13 +62,7 @@ namespace ReadDeviceToCloudMessages
                 cts.Cancel();
                 Console.WriteLine("Exiting...");
             };
-
-            var tasks = new List<Task>();
-            foreach (string partition in d2cPartitions)
-            {
-                tasks.Add(ReceiveMessagesFromDeviceAsync(partition, cts.Token));
-            }
-            Task.WaitAll(tasks.ToArray());
+            return cts.Token;
         }
     }
 }
