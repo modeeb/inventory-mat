@@ -14,6 +14,7 @@ namespace SimulatedDevice
         static string iotHubUri = "qtmatters.azure-devices.net";
         static string deviceId = "inventory-mat";
         static string deviceKey = "kD+P3NBu2tQ0Db9D/6vQX9Z3zgNSkHJGwiPL1i5w7LE=";
+        static string connectionString = "HostName=qtmatters.azure-devices.net;DeviceId=inventory-mat;SharedAccessKey=kD+P3NBu2tQ0Db9D/6vQX9Z3zgNSkHJGwiPL1i5w7LE=";
 
         private static async void SendDeviceToCloudMessagesAsync()
         {
@@ -58,7 +59,8 @@ namespace SimulatedDevice
         static void Main(string[] args)
         {
             Console.WriteLine("Simulated device\n");
-            deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey));
+            //deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey));
+            deviceClient = DeviceClient.CreateFromConnectionString(connectionString);
 
             //SendDeviceToCloudMessagesAsync();
             SendDeviceToCloudInteractiveMessagesAsync();
