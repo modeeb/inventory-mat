@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateDeviceIdentity", "CreateDeviceIdentity\CreateDeviceIdentity.csproj", "{705451DA-41AE-46A3-A7CE-74646551E4F6}"
 EndProject
@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessD2CInteractiveMessag
 	ProjectSection(ProjectDependencies) = postProject
 		{679589A3-8AEA-47D4-9EA8-DE9D4ED35CE0} = {679589A3-8AEA-47D4-9EA8-DE9D4ED35CE0}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddTagsAndQuery", "AddTagsAndQuery\AddTagsAndQuery.csproj", "{D2A92070-69B1-4D27-852D-C9AA034753AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 		{287D170D-8F7E-4885-B2C6-C57F72401358}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{287D170D-8F7E-4885-B2C6-C57F72401358}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{287D170D-8F7E-4885-B2C6-C57F72401358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2A92070-69B1-4D27-852D-C9AA034753AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2A92070-69B1-4D27-852D-C9AA034753AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2A92070-69B1-4D27-852D-C9AA034753AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2A92070-69B1-4D27-852D-C9AA034753AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
