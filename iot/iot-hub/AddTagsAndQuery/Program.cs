@@ -10,7 +10,7 @@ namespace AddTagsAndQuery
     class Program
     {
         static RegistryManager registryManager;
-        static string connectionString = "HostName=qtmatters.azure-devices.net;DeviceId=inventory-mat;SharedAccessKeyName=device;SharedAccessKey=kD+P3NBu2tQ0Db9D/6vQX9Z3zgNSkHJGwiPL1i5w7LE=";
+        static string connectionString = "HostName=qtmatters.azure-devices.net;DeviceId=inventory-mat;SharedAccessKey=r48FbqnywsbEVo9swdl8VKD920ysjNIKU96DBoQyHgs=";
 
         public static async Task AddTagsAndQuery()
         {

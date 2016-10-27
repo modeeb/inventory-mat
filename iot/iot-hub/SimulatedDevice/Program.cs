@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace SimulatedDevice
 {
@@ -13,8 +14,8 @@ namespace SimulatedDevice
         static DeviceClient deviceClient;
         static string iotHubUri = "qtmatters.azure-devices.net";
         static string deviceId = "inventory-mat";
-        static string deviceKey = "kD+P3NBu2tQ0Db9D/6vQX9Z3zgNSkHJGwiPL1i5w7LE=";
-        static string connectionString = "HostName=qtmatters.azure-devices.net;DeviceId=inventory-mat;SharedAccessKey=kD+P3NBu2tQ0Db9D/6vQX9Z3zgNSkHJGwiPL1i5w7LE=";
+        static string deviceKey = "r48FbqnywsbEVo9swdl8VKD920ysjNIKU96DBoQyHgs=";
+        static string connectionString = "HostName=qtmatters.azure-devices.net;DeviceId=inventory-mat;SharedAccessKey=r48FbqnywsbEVo9swdl8VKD920ysjNIKU96DBoQyHgs=";
 
         private static async void SendDeviceToCloudMessagesAsync()
         {
@@ -56,6 +57,20 @@ namespace SimulatedDevice
             }
         }
 
+        private static async void SendToBlobAsync(string fileName)
+        {
+            Console.WriteLine("Uploading file: {0}", fileName);
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
+            using (var sourceData = new FileStream(fileName, FileMode.Open))
+            {
+                await deviceClient.UploadToBlobAsync(fileName, sourceData);
+            }
+
+            watch.Stop();
+            Console.WriteLine("Time to upload file: {0}ms\n", watch.ElapsedMilliseconds);
+        }
+
         static void Main(string[] args)
         {
             Console.WriteLine("Simulated device\n");
@@ -63,7 +78,8 @@ namespace SimulatedDevice
             deviceClient = DeviceClient.CreateFromConnectionString(connectionString);
 
             //SendDeviceToCloudMessagesAsync();
-            SendDeviceToCloudInteractiveMessagesAsync();
+            //SendDeviceToCloudInteractiveMessagesAsync();
+            SendToBlobAsync("data.json");
             Console.ReadLine();
         }
     }

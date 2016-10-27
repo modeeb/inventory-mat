@@ -24,6 +24,29 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessD2CInteractiveMessag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddTagsAndQuery", "AddTagsAndQuery\AddTagsAndQuery.csproj", "{D2A92070-69B1-4D27-852D-C9AA034753AA}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ReportConnectivity", "ReportConnectivity\", "{A987D5B5-C41E-4830-AD7E-B4A20FD09C31}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_58923"
+		Debug.AspNetCompiler.PhysicalPath = "ReportConnectivity\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_58923\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_58923"
+		Release.AspNetCompiler.PhysicalPath = "ReportConnectivity\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_58923\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "58923"
+		SlnRelativePath = "ReportConnectivity\"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadFileUploadNotification", "ReadFileUploadNotification\ReadFileUploadNotification.csproj", "{385FC0F4-3536-4081-908D-872102553D8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +77,14 @@ Global
 		{D2A92070-69B1-4D27-852D-C9AA034753AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2A92070-69B1-4D27-852D-C9AA034753AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2A92070-69B1-4D27-852D-C9AA034753AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A987D5B5-C41E-4830-AD7E-B4A20FD09C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A987D5B5-C41E-4830-AD7E-B4A20FD09C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A987D5B5-C41E-4830-AD7E-B4A20FD09C31}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{A987D5B5-C41E-4830-AD7E-B4A20FD09C31}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{385FC0F4-3536-4081-908D-872102553D8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{385FC0F4-3536-4081-908D-872102553D8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{385FC0F4-3536-4081-908D-872102553D8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{385FC0F4-3536-4081-908D-872102553D8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

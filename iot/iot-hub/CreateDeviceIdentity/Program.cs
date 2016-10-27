@@ -12,7 +12,7 @@ namespace CreateDeviceIdentity
     class Program
     {
         static RegistryManager registryManager;
-        static string connectionString = "HostName=qtmatters.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=7fvxqYFuQd2+/oHHJWmqXdGKUK6qZi/+3IQxP/Iiaq8=";
+        static string connectionString = "HostName=qtmatters.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=EXPgQQxs7vbxm/iZZXQzkC0E3UsmlzV2CuyL8TjjObE=";
 
         private static async Task AddDeviceAsync()
         {

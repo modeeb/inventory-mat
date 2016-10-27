@@ -11,9 +11,9 @@ namespace ProcessDeviceToCloudMessages
     {
         static void Main(string[] args)
         {
-            string iotHubConnectionString = "HostName=qtmatters.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=7fvxqYFuQd2+/oHHJWmqXdGKUK6qZi/+3IQxP/Iiaq8=";
+            string iotHubConnectionString = "HostName=qtmatters.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=EXPgQQxs7vbxm/iZZXQzkC0E3UsmlzV2CuyL8TjjObE=";
             string iotHubD2cEndpoint = "messages/events";
-            StoreEventProcessor.StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=qtmatters;AccountKey=cMUIx0R3AosttNbK5bRLipkVQbBzIRnYGyiQgsVZQsDvtv6TQJAeA2gTG2jweus46Bx12Z7ahSFegrEfwNxQig==;";
+            StoreEventProcessor.StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=qtmatters;AccountKey=yqgRKM2uMGvQ3sKYUycCpYRkxznNvonyPQNYM+N17YjZ7BNpOpF+vLo2R3xv9iyjUxpq8ZJ7YASmnvT3MVgRBA==;";
             StoreEventProcessor.ServiceBusConnectionString = "Endpoint=sb://qtmatters.servicebus.windows.net/;SharedAccessKeyName=send;SharedAccessKey=oeBAbi5/u1YTEhNbXcIeZL3NVfogDNTwj+m0PfK1fv4=;EntityPath=qtmatters";
 
             string eventProcessorHostName = Guid.NewGuid().ToString();
